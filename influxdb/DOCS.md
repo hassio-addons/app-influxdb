@@ -11,10 +11,10 @@ or InfluxDB 3; those have a different API, data model and configuration. If
 you are integrating with Home Assistant, use the `influxdb` integration with
 `api_version: 1`, which is the default.
 
-This app comes with Chronograf & Kapacitor pre-installed as well. Which
-gives you a nice InfluxDB admin interface for managing your users, databases,
-data retention settings, and lets you peek inside the database using the
-Data Explorer.
+This app comes with Chronograf and Kapacitor pre-installed, which gives you
+a nice InfluxDB admin interface for managing your users, databases and data
+retention settings, and lets you peek inside the database using the Data
+Explorer.
 
 ## Installation
 
@@ -40,7 +40,7 @@ Example app configuration:
 ```yaml
 log_level: info
 auth: true
-reporting: true
+reporting: false
 ssl: true
 certfile: fullchain.pem
 keyfile: privkey.pem
@@ -77,16 +77,18 @@ Enable or disable InfluxDB user authentication.
 
 ### Option: `reporting`
 
-This option allows you to disable the reporting of usage data to InfluxData.
+Enables or disables the reporting of anonymous usage data by InfluxDB,
+Chronograf and Kapacitor to InfluxData. It is disabled by default.
 
 **Note**: _No data from user databases is ever transmitted!_
 
 ### Option: `ssl`
 
-Enables/Disables SSL (HTTPS) on the web interface.
-Set it `true` to enable it, `false` otherwise.
+Enables/Disables SSL (HTTPS) on the Chronograf web interface when it is
+exposed directly on port 80. Set it `true` to enable it, `false` otherwise.
 
-**Note**: _This does NOT activate SSL for InfluxDB, just the web interface_
+**Note**: _This does NOT activate SSL for the InfluxDB API on port 8086, just
+the web interface. See the known issues and limitations section below._
 
 ### Option: `certfile`
 
@@ -105,9 +107,9 @@ The private key file to use for SSL.
 This allows the setting of Environment Variables to control InfluxDB
 configuration as documented at:
 
-<https://docs.influxdata.com/influxdb/v1.7/administration/config/#configuration-settings>
+<https://docs.influxdata.com/influxdb/v1/administration/config/>
 
-**Note**: _Changing these options can possibly cause issues with you instance.
+**Note**: _Changing these options can possibly cause issues with your instance.
 USE AT YOUR OWN RISK!_
 
 These are case sensitive.
@@ -118,14 +120,15 @@ The name of the environment variable to set which must start with `INFLUXDB_`
 
 #### Sub-option: `value`
 
-The value of the environment variable to set, set the Influx documentation for
-full details. Values should always be entered as a string (even true/false values).
+The value of the environment variable to set, see the InfluxDB documentation
+for full details. Values should always be entered as a string (even true/false
+values).
 
 ### Option: `leave_front_door_open`
 
-Adding this option to the app configuration allows you to disable
-authentication on the Web Terminal by setting it to `true` and leaving the
-username and password empty.
+Adding this option to the app configuration allows you to disable the Home
+Assistant authentication on the Chronograf web interface, when it is exposed
+directly on port 80, by setting it to `true`.
 
 **Note**: _We STRONGLY suggest, not to use this, even if this app is
 only exposed to your internal network. USE AT YOUR OWN RISK!_
@@ -150,6 +153,7 @@ Now we've got this in place, add the following snippet to your Home Assistant
 
 ```yaml
 influxdb:
+  api_version: 1
   host: a0d7b954-influxdb
   port: 8086
   database: homeassistant
@@ -168,11 +172,27 @@ Full details of the Home Assistant integration can be found here:
 
 <https://www.home-assistant.io/integrations/influxdb/>
 
+## Backup and restore
+
+The InfluxDB databases, the Chronograf settings and the Kapacitor data are
+all stored in the data directory of the app, so a regular Home Assistant
+backup of this app contains everything.
+
+For a database level backup, the app exposes the InfluxDB backup and restore
+RPC service on port 8088 (disable the port if you do not need it), which can
+be used with the `influxd backup` and `influxd restore` tools from another
+machine. The `/share` folder of Home Assistant is available inside the app as
+well, for example to import or export data using the `influx` CLI.
+
+Full details on backing up and restoring InfluxDB 1.x can be found here:
+
+<https://docs.influxdata.com/influxdb/v1/administration/backup_and_restore/>
+
 ## Known issues and limitations
 
-- While the Chronograph interface supports SSL, currently, the app does
-  not support having SSL on InfluxDB. This limitation is caused by
-  Chronograf and we are still looking into a proper solution for this.
+- While the Chronograf interface supports SSL, the app does not support
+  enabling SSL on the InfluxDB API itself. This limitation is caused by
+  Chronograf, and we are still looking into a proper solution for this.
 
 ## Changelog & Releases
 
@@ -200,7 +220,7 @@ You have several options to get them answered:
 - The Home Assistant [Community Forum][forum].
 - Join the [Reddit subreddit][reddit] in [/r/homeassistant][reddit]
 
-You could also [open an issue here][issue] GitHub.
+You could also [open an issue here][issue] on GitHub.
 
 ## Authors & contributors
 
@@ -238,7 +258,6 @@ SOFTWARE.
 [contributors]: https://github.com/hassio-addons/app-influxdb/graphs/contributors
 [discord-ha]: https://discord.gg/c5DvZ4e
 [discord]: https://discord.me/hassioaddons
-[forum-shield]: https://img.shields.io/badge/community-forum-brightgreen.svg
 [forum]: https://community.home-assistant.io/t/home-assistant-community-add-on-influxdb/54491?u=frenck
 [frenck]: https://github.com/frenck
 [issue]: https://github.com/hassio-addons/app-influxdb/issues

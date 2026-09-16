@@ -7,7 +7,7 @@ data_dir = "/data/kapacitor"
   boltdb = "/data/kapacitor/kapacitor.db"
 
 [http]
-  bind-address = "127.0.0.1:9092"
+  bind-address = "{{ .bind_address }}:9092"
 
 [logging]
   level = "{{ .log_level }}"

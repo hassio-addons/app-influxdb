@@ -124,6 +124,19 @@ The value of the environment variable to set, see the InfluxDB documentation
 for full details. Values should always be entered as a string (even true/false
 values).
 
+For example, to enable the InfluxDB UDP listener (exposed on port 8089 in the
+network settings of the app):
+
+```yaml
+envvars:
+  - name: INFLUXDB_UDP_0_ENABLED
+    value: "true"
+  - name: INFLUXDB_UDP_0_BIND_ADDRESS
+    value: ":8089"
+  - name: INFLUXDB_UDP_0_DATABASE
+    value: "udp"
+```
+
 ### Option: `leave_front_door_open`
 
 Adding this option to the app configuration allows you to disable the Home
@@ -171,6 +184,24 @@ and using the Data Explorer.
 Full details of the Home Assistant integration can be found here:
 
 <https://www.home-assistant.io/integrations/influxdb/>
+
+## Network ports
+
+Besides the Chronograf web interface (port 80, not needed when using
+Ingress), the app can expose the following ports in its network settings:
+
+- `8086/tcp`: The InfluxDB HTTP API. Used by the Home Assistant `influxdb`
+  integration, Grafana and other clients.
+- `8088/tcp`: The InfluxDB RPC service, used by the `influxd backup` and
+  `influxd restore` tools.
+- `8089/udp`: The InfluxDB UDP listener, disabled by default. See the
+  `envvars` option above on how to enable it.
+- `9092/tcp`: The Kapacitor HTTP API, for managing Kapacitor tasks from
+  outside of Home Assistant. Kapacitor only listens on this port for external
+  connections when it is exposed here.
+
+**Note**: _Kapacitor does not have authentication, only expose its API on a
+trusted network._
 
 ## Backup and restore
 

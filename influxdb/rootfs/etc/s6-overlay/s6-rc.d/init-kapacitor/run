@@ -4,7 +4,15 @@
 # Home Assistant Community App: InfluxDB
 # Configures Kapacitor
 # ==============================================================================
+declare bind_address
 declare log_level
+
+# Only listen on all interfaces when the API port is exposed by the user
+bind_address="127.0.0.1"
+if bashio::var.has_value "$(bashio::app.port 9092)"; then
+    bashio::log.info "Exposing the Kapacitor HTTP API on port 9092"
+    bind_address="0.0.0.0"
+fi
 
 # Find the matching Kapacitor log level
 log_level="ERROR"
@@ -29,6 +37,7 @@ if bashio::config.has_value 'log_level'; then
 fi
 
 bashio::var.json \
+    bind_address "${bind_address}" \
     log_level "${log_level}" \
     reporting "^$(bashio::config 'reporting')" \
     secret "$(</data/secret)" \

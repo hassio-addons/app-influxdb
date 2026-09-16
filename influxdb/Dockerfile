@@ -8,7 +8,7 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 # Setup base system
 ARG BUILD_ARCH=amd64
 ARG INFLUXDB_VERSION="1.13.1"
-ARG CHRONOGRAF_VERSION="1.11.4"
+ARG CHRONOGRAF_VERSION="1.11.5"
 ARG KAPACITOR_VERSION="1.8.7"
 RUN \
     apt-get update \

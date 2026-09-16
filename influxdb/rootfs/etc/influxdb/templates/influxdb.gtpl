@@ -6,6 +6,7 @@ reporting-disabled = {{ not .reporting }}
 [data]
   dir = "/data/influxdb/data"
   engine = "tsm1"
+  index-version = "tsi1"
   wal-dir = "/data/influxdb/wal"
 
 [http]

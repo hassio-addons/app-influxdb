@@ -2,12 +2,36 @@
 # shellcheck shell=bash
 # ==============================================================================
 # Home Assistant Community App: InfluxDB
-# Configures Kapacitor.conf
+# Configures Kapacitor
 # ==============================================================================
+declare log_level
+
+# Find the matching Kapacitor log level
+log_level="ERROR"
+if bashio::config.has_value 'log_level'; then
+    case "$(bashio::string.lower "$(bashio::config 'log_level')")" in
+        all|trace|debug)
+            log_level="DEBUG"
+            ;;
+        info|notice)
+            log_level="INFO"
+            ;;
+        warning)
+            log_level="WARN"
+            ;;
+        error|fatal)
+            log_level="ERROR"
+            ;;
+        off)
+            log_level="OFF"
+            ;;
+    esac
+fi
 
 bashio::var.json \
+    log_level "${log_level}" \
     reporting "^$(bashio::config 'reporting')" \
-    secret "$(</data/secret)"\
+    secret "$(</data/secret)" \
     | tempio \
         -template /etc/kapacitor/templates/kapacitor.gtpl \
         -out /etc/kapacitor/kapacitor.conf

@@ -1,6 +1,5 @@
 #!/command/with-contenv bashio
 # shellcheck shell=bash
-# shellcheck disable=SC2191
 # ==============================================================================
 # Home Assistant Community App: InfluxDB
 # Runs the Chronograf Server
@@ -11,22 +10,19 @@ declare secret
 
 secret=$(</data/secret)
 
-# Wait for InfluxDB...
+# Wait for InfluxDB to accept our credentials
+bashio::net.wait_for 8086 localhost 900
 bashio::log.info "Chronograf is waiting until InfluxDB is available..."
-for i in {1800..0}; do
+for _ in {1..60}; do
     if influx \
         -execute "SHOW DATABASES" \
         -username "chronograf" \
         -password "${secret}" \
         > /dev/null 2>&1; then
-        break;
+        break
     fi
-    sleep 5
+    sleep 2
 done
-
-if [[ "$i" = 0 ]]; then
-    bashio::log.warning "Chronograf is done waiting. Starting anyway..."
-fi
 
 bashio::log.info 'Starting Chronograf...'
 

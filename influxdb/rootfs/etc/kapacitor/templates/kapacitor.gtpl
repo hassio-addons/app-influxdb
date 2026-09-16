@@ -10,13 +10,12 @@ data_dir = "/data/kapacitor"
   bind-address = "127.0.0.1:9092"
 
 [logging]
-  level="ERROR"
+  level = "{{ .log_level }}"
 
 [[influxdb]]
   urls = ["http://localhost:8086"]
   username = "kapacitor"
   password = "{{ .secret }}"
-  insecure-skip-verify = true
 
 [reporting]
   enabled = {{ .reporting }}

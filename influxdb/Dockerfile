@@ -13,23 +13,18 @@ ARG KAPACITOR_VERSION="1.8.7"
 RUN \
     apt-get update \
     && apt-get install -y --no-install-recommends \
-        libnginx-mod-http-lua=1:0.10.28-2 \
-        luarocks=3.8.0+dfsg1-1 \
         nginx=1.26.3-3+deb13u9 \
-        procps=2:4.0.4-9 \
-    \
-    && luarocks install lua-resty-http 0.15-0 \
     \
     && ARCH="${BUILD_ARCH}" \
     && if [ "${BUILD_ARCH}" = "aarch64" ]; then ARCH="arm64"; fi \
     \
-    && curl --fail -J -L -o /tmp/influxdb.deb \
+    && curl --fail --silent --show-error -J -L -o /tmp/influxdb.deb \
         "https://dl.influxdata.com/influxdb/releases/v${INFLUXDB_VERSION}/influxdb_${INFLUXDB_VERSION}-1_${ARCH}.deb" \
     \
-    && curl --fail -J -L -o /tmp/chronograf.deb \
+    && curl --fail --silent --show-error -J -L -o /tmp/chronograf.deb \
         "https://dl.influxdata.com/chronograf/releases/chronograf_${CHRONOGRAF_VERSION}_${ARCH}.deb" \
     \
-    && curl --fail -J -L -o /tmp/kapacitor.deb \
+    && curl --fail --silent --show-error -J -L -o /tmp/kapacitor.deb \
         "https://dl.influxdata.com/kapacitor/releases/kapacitor_${KAPACITOR_VERSION}-1_${ARCH}.deb" \
     \
     && dpkg --install /tmp/influxdb.deb \

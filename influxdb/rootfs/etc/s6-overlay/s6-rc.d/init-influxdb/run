@@ -4,17 +4,40 @@
 # Home Assistant Community App: InfluxDB
 # Configures InfluxDB
 # ==============================================================================
+declare log_level
 
-# Configures authentication
-if bashio::config.true 'auth'; then
-    sed -i 's/\<auth-enabled\>.*/auth-enabled=true/' /etc/influxdb/influxdb.conf
-else
+if bashio::config.false 'auth'; then
     bashio::log.warning "InfluxDB authentication protection is disabled!"
     bashio::log.warning "This is NOT recommended!!!"
 fi
 
-# Configures usage reporting to InfluxDB
 if bashio::config.false 'reporting'; then
-    sed -i 's/\<reporting-disabled\>.*/reporting-disabled=true/' /etc/influxdb/influxdb.conf
     bashio::log.info "Reporting of usage stats to InfluxData is disabled."
 fi
+
+# Find the matching InfluxDB log level
+log_level="warn"
+if bashio::config.has_value 'log_level'; then
+    case "$(bashio::string.lower "$(bashio::config 'log_level')")" in
+        all|trace|debug)
+            log_level="debug"
+            ;;
+        info|notice)
+            log_level="info"
+            ;;
+        warning)
+            log_level="warn"
+            ;;
+        error|fatal|off)
+            log_level="error"
+            ;;
+    esac
+fi
+
+bashio::var.json \
+    auth "^$(bashio::config 'auth')" \
+    log_level "${log_level}" \
+    reporting "^$(bashio::config 'reporting')" \
+    | tempio \
+        -template /etc/influxdb/templates/influxdb.gtpl \
+        -out /etc/influxdb/influxdb.conf

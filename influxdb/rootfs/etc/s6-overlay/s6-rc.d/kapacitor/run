@@ -8,22 +8,19 @@ declare secret
 
 secret=$(</data/secret)
 
-# Wait for InfluxDB...
+# Wait for InfluxDB to accept our credentials
+bashio::net.wait_for 8086 localhost 900
 bashio::log.info "Kapacitor is waiting until InfluxDB is available..."
-for i in {1800..0}; do
+for _ in {1..60}; do
     if influx \
         -execute "SHOW DATABASES" \
         -username "kapacitor" \
         -password "${secret}" \
         > /dev/null 2>&1; then
-        break;
+        break
     fi
-    sleep 5
+    sleep 2
 done
-
-if [[ "$i" = 0 ]]; then
-    bashio::log.warning "Kapacitor is done waiting. Starting anyway..."
-fi
 
 bashio::log.info 'Starting the Kapacitor'
 

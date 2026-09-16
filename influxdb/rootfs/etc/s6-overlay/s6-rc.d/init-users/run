@@ -4,6 +4,7 @@
 # Home Assistant Community App: InfluxDB
 # Ensure a user for Chronograf & Kapacitor exists within InfluxDB
 # ==============================================================================
+declare influxd_pid
 declare secret
 
 # If secret file exists, skip this script
@@ -11,50 +12,36 @@ if bashio::fs.file_exists "/data/secret"; then
     exit 0
 fi
 
-# Generate secret based on the Hass.io token
-secret="${SUPERVISOR_TOKEN:21:32}"
+secret=$(openssl rand -hex 32)
 
-exec 3< <(influxd)
+# Start a temporary InfluxDB, with authentication disabled, to create the users
+INFLUXDB_HTTP_AUTH_ENABLED=false influxd > /dev/null 2>&1 &
+influxd_pid=$!
 
-sleep 3
-
-for i in {1800..0}; do
+bashio::log.info "Waiting for InfluxDB to come up to create the users..."
+for _ in {1..60}; do
     if influx -execute "SHOW DATABASES" > /dev/null 2>&1; then
-        break;
+        break
     fi
-    bashio::log.info "InfluxDB init process in progress..."
-    sleep 5
+    sleep 2
 done
 
-if [[ "$i" = 0 ]]; then
-    bashio::exit.nok "InfluxDB init process failed."
+if ! influx -execute "SHOW DATABASES" > /dev/null 2>&1; then
+    kill "${influxd_pid}" 2> /dev/null || true
+    bashio::exit.nok "InfluxDB did not come up, unable to create the users."
 fi
 
-influx -execute \
-    "CREATE USER chronograf WITH PASSWORD '${secret}'" \
-         &> /dev/null || true
+for user in chronograf kapacitor; do
+    # The user may already exist when the secret was lost
+    influx -execute "CREATE USER ${user} WITH PASSWORD '${secret}'" \
+        > /dev/null 2>&1 || true
+    influx -execute "SET PASSWORD FOR ${user} = '${secret}'" > /dev/null
+    influx -execute "GRANT ALL PRIVILEGES TO ${user}" > /dev/null
+done
 
-influx -execute \
-    "SET PASSWORD FOR chronograf = '${secret}'" \
-         &> /dev/null || true
-
-influx -execute \
-    "GRANT ALL PRIVILEGES TO chronograf" \
-        &> /dev/null || true
-
-influx -execute \
-    "CREATE USER kapacitor WITH PASSWORD '${secret}'" \
-        &> /dev/null || true
-
-influx -execute \
-    "SET PASSWORD FOR kapacitor = '${secret}'" \
-        &> /dev/null || true
-
-influx -execute \
-    "GRANT ALL PRIVILEGES TO kapacitor" \
-        &> /dev/null || true
-
-kill "$(pgrep influxd)" >/dev/null 2>&1
+# Stop the temporary InfluxDB and wait for it to release the data directory
+kill "${influxd_pid}"
+wait "${influxd_pid}" || true
 
 # Save secret for future use
 echo "${secret}" > /data/secret

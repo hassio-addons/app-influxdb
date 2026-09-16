@@ -1,9 +1,15 @@
-# Home Assistant Community App: InfluxDB
+# Home Assistant Community App: InfluxDB v1
 
 InfluxDB is an open source time series database optimized for high-write-volume.
 It's useful for recording metrics, sensor data, events,
 and performing analytics. It exposes an HTTP API for client interaction and is
 often used in combination with Grafana to visualize the data.
+
+This app provides the InfluxDB **1.x** series (InfluxQL, the 1.x HTTP API and
+the classic database, user and retention policy model). It is not InfluxDB 2
+or InfluxDB 3; those have a different API, data model and configuration. If
+you are integrating with Home Assistant, use the `influxdb` integration with
+`api_version: 1`, which is the default.
 
 This app comes with Chronograf & Kapacitor pre-installed as well. Which
 gives you a nice InfluxDB admin interface for managing your users, databases,
@@ -21,8 +27,8 @@ comparison to installing any other Home Assistant app.
    [![Open this app in your Home Assistant instance.][addon-badge]][addon]
 
 1. Click the "Install" button to install the app.
-1. Start the "InfluxDB" app.
-1. Check the logs of the "InfluxDB" to see if everything went well.
+1. Start the "InfluxDB v1" app.
+1. Check the logs of the "InfluxDB v1" app to see if everything went well.
 1. Click the "OPEN WEB UI" button!
 
 ## Configuration

@@ -1,6 +1,6 @@
 #!/command/with-contenv bashio
 # ==============================================================================
-# Home Assistant Community Add-on: InfluxDB
+# Home Assistant Community App: InfluxDB
 # Configures NGINX for use with the Chronograf
 # ==============================================================================
 declare port
@@ -11,8 +11,8 @@ declare ingress_port
 declare ingress_entry
 declare keyfile
 
-port=$(bashio::addon.port 80)
-ingress_entry=$(bashio::addon.ingress_entry)
+port=$(bashio::app.port 80)
+ingress_entry=$(bashio::app.ingress_entry)
 if bashio::var.has_value "${port}"; then
     bashio::config.require.ssl
 
@@ -31,8 +31,8 @@ if bashio::var.has_value "${port}"; then
     sed -i "s#%%ingress_entry%%#${ingress_entry}#g" /etc/nginx/servers/direct.conf
 fi
 
-ingress_port=$(bashio::addon.ingress_port)
-ingress_interface=$(bashio::addon.ip_address)
+ingress_port=$(bashio::app.ingress_port)
+ingress_interface=$(bashio::app.ip_address)
 sed -i "s/%%port%%/${ingress_port}/g" /etc/nginx/servers/ingress.conf
 sed -i "s/%%interface%%/${ingress_interface}/g" /etc/nginx/servers/ingress.conf
 sed -i "s#%%ingress_entry%%#${ingress_entry}#g" /etc/nginx/servers/ingress.conf

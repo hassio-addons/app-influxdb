@@ -1,7 +1,7 @@
 #!/command/with-contenv bashio
 # shellcheck disable=SC2191
 # ==============================================================================
-# Home Assistant Community Add-on: InfluxDB
+# Home Assistant Community App: InfluxDB
 # Runs the Chronograf Server
 # ==============================================================================
 declare -a options
@@ -59,7 +59,7 @@ if bashio::config.has_value 'log_level'; then
     esac
 fi
 
-ingress_entry=$(bashio::addon.ingress_entry)
+ingress_entry=$(bashio::app.ingress_entry)
 options+=(--basepath "${ingress_entry}")
 
 if bashio::config.false 'reporting'; then

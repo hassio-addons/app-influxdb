@@ -1,6 +1,6 @@
 #!/command/with-contenv bashio
 # ==============================================================================
-# Home Assistant Community Add-on: InfluxDB
+# Home Assistant Community App: InfluxDB
 # Configures Kapacitor.conf
 # ==============================================================================
 

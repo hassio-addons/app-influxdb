@@ -4,7 +4,6 @@ version: dev
 slug: influxdb
 description: Scalable datastore for metrics, events, and real-time analytics
 url: https://github.com/hassio-addons/addon-influxdb
-codenotary: codenotary@frenck.dev
 ingress: true
 ingress_port: 1337
 ingress_stream: true
@@ -15,7 +14,6 @@ hassio_api: true
 arch:
   - aarch64
   - amd64
-  - armv7
 init: false
 map:
   - share:rw

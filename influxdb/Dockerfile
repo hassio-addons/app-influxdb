@@ -1,4 +1,4 @@
-ARG BUILD_FROM=ghcr.io/hassio-addons/debian-base/amd64:7.7.1
+ARG BUILD_FROM=ghcr.io/hassio-addons/debian-base/amd64:9.4.0
 # hadolint ignore=DL3006
 FROM ${BUILD_FROM}
 
@@ -13,16 +13,15 @@ ARG KAPACITOR_VERSION="1.5.9-1"
 RUN \
     apt-get update \
     && apt-get install -y --no-install-recommends \
-        libnginx-mod-http-lua=1:0.10.23-1 \
+        libnginx-mod-http-lua=1:0.10.28-2 \
         luarocks=3.8.0+dfsg1-1 \
-        nginx=1.22.1-9 \
-        procps=2:4.0.2-3 \
+        nginx=1.26.3-3+deb13u8 \
+        procps=2:4.0.4-9 \
     \
     && luarocks install lua-resty-http 0.15-0 \
     \
     && ARCH="${BUILD_ARCH}" \
     && if [ "${BUILD_ARCH}" = "aarch64" ]; then ARCH="arm64"; fi \
-    && if [ "${BUILD_ARCH}" = "armv7" ]; then ARCH="armhf"; fi \
     \
     && curl -J -L -o /tmp/influxdb.deb \
         "https://dl.influxdata.com/influxdb/releases/influxdb_${INFLUXDB_VERSION}_${ARCH}.deb" \

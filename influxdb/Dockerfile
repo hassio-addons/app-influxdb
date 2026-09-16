@@ -7,7 +7,7 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 # Setup base system
 ARG BUILD_ARCH=amd64
-ARG INFLUXDB_VERSION="1.8.10"
+ARG INFLUXDB_VERSION="1.13.1"
 ARG CHRONOGRAF_VERSION="1.11.4"
 ARG KAPACITOR_VERSION="1.8.6"
 RUN \
@@ -23,13 +23,13 @@ RUN \
     && ARCH="${BUILD_ARCH}" \
     && if [ "${BUILD_ARCH}" = "aarch64" ]; then ARCH="arm64"; fi \
     \
-    && curl -J -L -o /tmp/influxdb.deb \
-        "https://dl.influxdata.com/influxdb/releases/influxdb_${INFLUXDB_VERSION}_${ARCH}.deb" \
+    && curl --fail -J -L -o /tmp/influxdb.deb \
+        "https://dl.influxdata.com/influxdb/releases/v${INFLUXDB_VERSION}/influxdb_${INFLUXDB_VERSION}-1_${ARCH}.deb" \
     \
-    && curl -J -L -o /tmp/chronograf.deb \
+    && curl --fail -J -L -o /tmp/chronograf.deb \
         "https://dl.influxdata.com/chronograf/releases/chronograf_${CHRONOGRAF_VERSION}_${ARCH}.deb" \
     \
-    && curl -J -L -o /tmp/kapacitor.deb \
+    && curl --fail -J -L -o /tmp/kapacitor.deb \
         "https://dl.influxdata.com/kapacitor/releases/kapacitor_${KAPACITOR_VERSION}-1_${ARCH}.deb" \
     \
     && dpkg --install /tmp/influxdb.deb \

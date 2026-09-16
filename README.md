@@ -29,9 +29,9 @@ you are integrating with Home Assistant, use the `influxdb` integration with
 
 ![Chronograf in the Home Assistant Frontend](images/screenshot.png)
 
-This app comes with Chronograf & Kapacitor pre-installed. These provide a
-nice InfluxDB admin interface for managing your users, databases, data
-retention settings, and let you peek inside the database using the Data
+This app comes with Chronograf and Kapacitor pre-installed, which gives you
+a nice InfluxDB admin interface for managing your users, databases and data
+retention settings, and lets you peek inside the database using the Data
 Explorer.
 
 [:books: Read the full app documentation][docs]
@@ -49,7 +49,7 @@ You have several options to get them answered:
 - The Home Assistant [Community Forum][forum].
 - Join the [Reddit subreddit][reddit] in [/r/homeassistant][reddit]
 
-You could also [open an issue here][issue] GitHub.
+You could also [open an issue here][issue] on GitHub.
 
 ## Contributing
 

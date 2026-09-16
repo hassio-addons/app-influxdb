@@ -1,8 +1,8 @@
 ---
-name: InfluxDB
+name: InfluxDB v1
 version: dev
 slug: influxdb
-description: Scalable datastore for metrics, events, and real-time analytics
+description: InfluxDB 1.x time series database with Chronograf and Kapacitor
 url: https://github.com/hassio-addons/app-influxdb
 ingress: true
 ingress_port: 1337

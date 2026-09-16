@@ -1,4 +1,4 @@
-# Home Assistant Community App: InfluxDB
+# Home Assistant Community App: InfluxDB v1
 
 [![GitHub Release][releases-shield]][releases]
 ![Project Stage][project-stage-shield]
@@ -12,7 +12,7 @@
 
 [![Support Frenck on Patreon][patreon-shield]][patreon]
 
-Scalable datastore for metrics, events, and real-time analytics.
+InfluxDB 1.x time series database with Chronograf and Kapacitor.
 
 ## About
 
@@ -20,6 +20,12 @@ InfluxDB is an open source time series database optimized for high-write-volume.
 It's useful for recording metrics, sensor data, events,
 and performing analytics. It exposes an HTTP API for client interaction and is
 often used in combination with Grafana to visualize the data.
+
+This app provides the InfluxDB **1.x** series (InfluxQL, the 1.x HTTP API and
+the classic database, user and retention policy model). It is not InfluxDB 2
+or InfluxDB 3; those have a different API, data model and configuration. If
+you are integrating with Home Assistant, use the `influxdb` integration with
+`api_version: 1`, which is the default.
 
 ![Chronograf in the Home Assistant Frontend](images/screenshot.png)
 

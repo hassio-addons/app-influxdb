@@ -7,7 +7,7 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 # Setup base system
 ARG BUILD_ARCH=amd64
-ARG INFLUXDB_VERSION="1.8.10"
+ARG INFLUXDB_VERSION="1.13.1"
 ARG CHRONOGRAF_VERSION="1.11.4"
 ARG KAPACITOR_VERSION="1.8.6"
 RUN \

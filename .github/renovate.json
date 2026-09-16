@@ -9,7 +9,7 @@
   "customManagers": [
     {
       "customType": "regex",
-      "fileMatch": ["/Dockerfile$", "/build.yaml$"],
+      "managerFilePatterns": ["//Dockerfile$/", "//build.yaml$/"],
       "matchStringsStrategy": "any",
       "matchStrings": [
         "ARG BUILD_FROM=(?<depName>.*?):(?<currentValue>.*?)\\s+",
@@ -19,14 +19,41 @@
     },
     {
       "customType": "regex",
-      "fileMatch": ["/Dockerfile$"],
+      "managerFilePatterns": ["//Dockerfile$/"],
       "matchStringsStrategy": "any",
       "matchStrings": [
-        "\\s\\s(?<package>[a-z0-9][a-z0-9.+-]+)=(?<currentValue>[a-z0-9-:_+~.]+)\\s+"
+        "\\s\\s(?<package>[a-z0-9][a-z0-9-]+)=(?<currentValue>[a-z0-9-:_+~.]+)\\s+"
       ],
       "versioningTemplate": "deb",
       "datasourceTemplate": "deb",
       "depNameTemplate": "{{{package}}}"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["//Dockerfile$/"],
+      "matchStringsStrategy": "any",
+      "matchStrings": ["ARG INFLUXDB_VERSION=\"(?<currentValue>.*?)\"\\s+"],
+      "depNameTemplate": "influxdata/influxdb",
+      "datasourceTemplate": "github-releases",
+      "extractVersionTemplate": "^v?(?<version>.*)$"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["//Dockerfile$/"],
+      "matchStringsStrategy": "any",
+      "matchStrings": ["ARG CHRONOGRAF_VERSION=\"(?<currentValue>.*?)\"\\s+"],
+      "depNameTemplate": "influxdata/chronograf",
+      "datasourceTemplate": "github-releases",
+      "extractVersionTemplate": "^v?(?<version>.*)$"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["//Dockerfile$/"],
+      "matchStringsStrategy": "any",
+      "matchStrings": ["ARG KAPACITOR_VERSION=\"(?<currentValue>.*?)\"\\s+"],
+      "depNameTemplate": "influxdata/kapacitor",
+      "datasourceTemplate": "github-releases",
+      "extractVersionTemplate": "^v?(?<version>.*)$"
     }
   ],
   "packageRules": [
@@ -41,27 +68,28 @@
     },
     {
       "groupName": "App base image",
-      "matchDatasources": ["docker"]
+      "matchDatasources": ["docker"],
+      "matchDepNames": ["ghcr.io/hassio-addons/debian-base"]
     },
     {
       "groupName": "App base image",
       "matchDatasources": ["docker"],
       "matchUpdateTypes": ["minor", "patch"],
+      "matchDepNames": ["ghcr.io/hassio-addons/debian-base"],
       "automerge": true
     },
     {
-      "groupName": "NGINX",
-      "matchDatasources": ["deb"],
-      "automerge": true,
-      "matchPackageNames": ["/nginx/"]
+      "matchDatasources": ["github-releases"],
+      "matchDepNames": ["influxdata/influxdb"],
+      "allowedVersions": "<2.0.0"
     },
     {
-      "matchManagers": ["github-actions"],
-      "addLabels": ["github_actions"],
-      "rangeStrategy": "pin"
-    },
-    {
-      "matchManagers": ["github-actions"],
+      "matchDatasources": ["github-releases"],
+      "matchDepNames": [
+        "influxdata/influxdb",
+        "influxdata/chronograf",
+        "influxdata/kapacitor"
+      ],
       "matchUpdateTypes": ["minor", "patch"],
       "automerge": true
     }

@@ -1,4 +1,4 @@
-ARG BUILD_FROM=ghcr.io/hassio-addons/debian-base/amd64:9.4.0
+ARG BUILD_FROM=ghcr.io/hassio-addons/debian-base:9.4.0
 # hadolint ignore=DL3006
 FROM ${BUILD_FROM}
 
@@ -9,7 +9,7 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 ARG BUILD_ARCH=amd64
 ARG INFLUXDB_VERSION="1.8.10"
 ARG CHRONOGRAF_VERSION="1.10.2"
-ARG KAPACITOR_VERSION="1.5.9-1"
+ARG KAPACITOR_VERSION="1.5.9"
 RUN \
     apt-get update \
     && apt-get install -y --no-install-recommends \
@@ -30,7 +30,7 @@ RUN \
         "https://dl.influxdata.com/chronograf/releases/chronograf_${CHRONOGRAF_VERSION}_${ARCH}.deb" \
     \
     && curl -J -L -o /tmp/kapacitor.deb \
-        "https://dl.influxdata.com/kapacitor/releases/kapacitor_${KAPACITOR_VERSION}_${ARCH}.deb" \
+        "https://dl.influxdata.com/kapacitor/releases/kapacitor_${KAPACITOR_VERSION}-1_${ARCH}.deb" \
     \
     && dpkg --install /tmp/influxdb.deb \
     && dpkg --install /tmp/chronograf.deb \

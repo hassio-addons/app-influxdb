@@ -13,7 +13,7 @@ ARG KAPACITOR_VERSION="1.8.8"
 RUN \
     apt-get update \
     && apt-get install -y --no-install-recommends \
-        nginx=1.26.3-3+deb13u9 \
+        nginx=1.26.3-3+deb13u10 \
     \
     && ARCH="${BUILD_ARCH}" \
     && if [ "${BUILD_ARCH}" = "aarch64" ]; then ARCH="arm64"; fi \
